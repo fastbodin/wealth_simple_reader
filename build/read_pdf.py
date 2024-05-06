@@ -11,9 +11,17 @@ def check_info_equities(pdf_name, period, equities):
 
     for equity in equities.ticker:
         if equity not in info_df.ticker.values:
-            info_df, new_equity = u_input_info(pdf_name, info_df, equity)
-            if new_equity != equity:
-                equities.loc[(equities.ticker == equity), 'ticker'] = new_equity
+            t_confirm = u_confirm("Looks like there may be missing information. "
+                                  "Is the ticker: {} correct?".format(equity))
+            if t_confirm == "n":
+                new_equity = u_input("Lets update it then.\nTicker <- case sens.):", "")
+                if new_equity not in info_df.ticker.values:
+                    info_df, new_equity = u_input_info(pdf_name, info_df, new_equity)
+                    equities.loc[(equities.ticker == equity), 'ticker'] = new_equity
+            else:
+                info_df, new_equity = u_input_info(pdf_name, info_df, equity)
+                if new_equity != equity:
+                    equities.loc[(equities.ticker == equity), 'ticker'] = new_equity
 
     info_df.sort_values(by = "ticker").to_csv("data/info.csv", index = False)
 
@@ -103,13 +111,6 @@ def u_confirm(user_query):
     return input("{} (y, n) ".format(user_query))
 
 def u_input_info(pdf_name, info_df, equity):
-    print("Missing information on {}. Please answer the following.".format(equity))
-
-    t_confirm = u_confirm("Is the ticker: {} correct?".format(equity))
-    if t_confirm == "n":
-        new_equity = u_input("Lets update it then.\nTicker <- case sens.):", "")
-        equity = new_equity
-
     confirm = 'n'
     while confirm == 'n':
         region = u_input("Region (US, CAN, INT, etc. <- case sens.):", "")
