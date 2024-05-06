@@ -12,7 +12,7 @@ def check_info_equities(pdf_name, period, equities):
     for equity in equities.ticker:
         if equity not in info_df.ticker.values:
             t_confirm = u_confirm("Looks like there may be missing information. "
-                                  "Is the ticker: {} correct?".format(equity))
+                                  "Is {} a ticker?".format(equity))
             if t_confirm == "n":
                 new_equity = u_input("Lets update it then.\nTicker <- case sens.):", "")
                 if new_equity not in info_df.ticker.values:
