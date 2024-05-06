@@ -1,6 +1,6 @@
 This repo contains code to parse Wealthsimple statement PDFs and save the data in running ledgers to csv files. This code was written prior to Wealthsimple making csv document available. 
 
-#**General Information:**
+# **General Information:**
 
 *build/* contains the python script to read Wealthsimple statements. It has been tested on my TFSA documents for the years 2020 -- current. It is not perfect, but it will try and catch errors and ask for input if it gets stuck.
 
@@ -12,11 +12,11 @@ This repo contains code to parse Wealthsimple statement PDFs and save the data i
 
 *statements/* is a dir for your statements. I recommend the two sub dirs: *read/* and *unread/* to sort the statements you have processed and the ones you have not.
 
-#**Dependencies:**
+# **Dependencies:**
 
 I built and tested this code on Python 3.12.1. The python script requires numpy, pandas, and pypdfs.
 
-#**How to run:**
+# **How to run:**
 - Clone this repo.
 - Download your Wealthsimple statements and put the in statements/unread/. NOTE the number of words in your name under Owner in the header of the Wealthsimple statement, this will be used below.
 - To read the statements, run: *python build/read_pdf.py statements/unread/{statement} {# of words in your name under Owner in the header of the Wealthsimple statement}*
