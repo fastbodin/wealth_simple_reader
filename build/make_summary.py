@@ -13,6 +13,7 @@ def main():
 
     holdings_df["% of portfolio"] = (holdings_df.market_value/port_value)*100
     holdings_df["Return (%)"] = (holdings_df.market_value/holdings_df.book_cost - 1)*100
+    holdings_df["Return ($)"] = (holdings_df.market_value - holdings_df.book_cost)
     holdings_df.sort_values(by="Return (%)", ascending=False, inplace=True)
 
     holdings_df.rename(columns={'ticker': 'Ticker'}, inplace=True)
@@ -21,7 +22,7 @@ def main():
 
 
     print("---------------------- {} HOLDINGS ----------------------".format(recent_statement))
-    print(holdings_df[["Ticker", "Return (%)", "% of portfolio", "Quantity", "Value ($)"]].to_string(index=False))
+    print(holdings_df[["Ticker", "Return (%)", "Return ($)", "% of portfolio", "Quantity", "Value ($)"]].to_string(index=False))
     print("-----------------------------------------------------------------")
 
 
@@ -52,3 +53,4 @@ def main():
     print("Taxes: ${:.2f}".format(cash_out_df.Taxes.sum()))
     print("------------------------------------------------------------")
 
+main()
