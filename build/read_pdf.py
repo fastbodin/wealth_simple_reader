@@ -6,7 +6,6 @@ from PyPDF2 import PdfReader
 
 
 def check_info_equities(pdf_name, period, equities):
-    print(equities)
     # read in information csv
     info_df = pd.read_csv("data/info.csv")
 

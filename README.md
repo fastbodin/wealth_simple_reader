@@ -14,7 +14,7 @@ This repo contains code to parse Wealthsimple statement PDFs and save the data i
 
 **Dependencies:**
 
-I built and tested this code on Python 3.12.1. The python script requires numpy, pandas, and pypdfs.
+I built and tested this code using Python 3.12.1. The python scripts require numpy, pandas, and pypdfs.
 
 **How to run:**
 - Clone this repo.
