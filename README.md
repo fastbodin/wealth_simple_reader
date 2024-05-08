@@ -1,3 +1,5 @@
+STILL A WORK IN-PROGRESS
+
 This repo contains code to parse Wealthsimple statement PDFs and save the data in running ledgers. This code was written prior to Wealthsimple making csv document available.
 
 **General Information:**
