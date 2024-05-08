@@ -1,15 +1,30 @@
 import pandas as pd
 import numpy as np
 from scipy.optimize import minimize_scalar
+import matplotlib.pyplot as plt
 
-def calculate_annual_compounded_rate(df, total_portfolio_value):
+def plot_return(df):
+    # Calculate cumulative sum of 'Deposits' column
+    df['Cumulative Deposits'] = df['Deposits'].cumsum()
+    # Calculate 'Return' column
+    df['Return'] = df['Total Portfolio'] - df['Cumulative Deposits']
+    # Create a plot
+    plt.figure(figsize=(10, 6))
+    plt.plot(df['Date'], df['Return'], marker='o', color='b', linestyle='-')
+    plt.xlabel('Date')
+    plt.ylabel('Return ($)')
+    plt.grid(True)
+    plt.xticks(rotation=45)
+    plt.tight_layout()
+    plt.show()
+
+
+
+def calc_annual_compounded_rate(df, total_portfolio_value):
     # Convert 'Date' column to datetime
     # taking the 'Start' of statement period to be the deposit date, even
     # though its between 'Start' and 'End'
     df['Date'] = pd.to_datetime(df['Start'])
-    
-    # Sort df by date
-    df = df.sort_values(by='Date')
     
     # Calculate the time difference in years
     # (most recent date) - (deposit date) <- converted to years
@@ -24,7 +39,6 @@ def calculate_annual_compounded_rate(df, total_portfolio_value):
         return np.abs(df['Deposits'].mul((1 + rate)**(df['Years_Invested'])).sum() 
                       - total_portfolio_value)
 
-    
     # Find the rate that minimizes the difference between the sum of compounded 
     # deposits and the total portfolio value. NOTE, I am assuming here that
     # your rate is between 0 and 100% (compounded annually), if you have a
@@ -34,13 +48,26 @@ def calculate_annual_compounded_rate(df, total_portfolio_value):
     
     # The result x is the annual compounded rate
     annual_compounded_rate = result.x*100
-    
+
+    # sanity check
+    value = 0
+    for index, row in df.iterrows():
+        value += row['Deposits']*((1+result.x)**row['Years_Invested'])
+    if value > total_portfolio_value - 1 and value < total_portfolio_value + 1:
+        pass
+    else:
+        print("Expected value: {} =?= {} (actual value)".format(value, total_portfolio_value))
+
     return annual_compounded_rate
 
 
 def main():
     holdings_df = pd.read_csv("data/holdings.csv")
     cash_in_df = pd.read_csv("data/cash_paid_in.csv")
+
+    cash_in_df['Start'] = pd.to_datetime(cash_in_df['Start'])
+    cash_in_df['End'] = pd.to_datetime(cash_in_df['End'])
+
     cash_out_df = pd.read_csv("data/cash_paid_out.csv")
 
     recent_statement = holdings_df.date.values[-1]
@@ -91,13 +118,15 @@ def main():
     print("Portfolio Value: ${:.2f}".format(port_value))
     print("Return ($): ${:.2f}".format(port_value-cash_in_df.Deposits.sum()))
     print("Return (%): {:.2f}%".format((port_value/cash_in_df.Deposits.sum() -1)*100))
-    print("Annual compounded return (%): {:.2f}%".format(
-          calculate_annual_compounded_rate(cash_in_df, port_value)))
+    print("Total Annual compounded return (%): {:.2f}%".format(
+          calc_annual_compounded_rate(cash_in_df, port_value)))
     print("-----------------------------------------------------------------\n")
 
     print("---------------------- DIVIDENDS AND TAXES  ----------------------")
     print("Dividends: ${:.2f}".format(cash_in_df.Dividends.sum()))
     print("Taxes: ${:.2f}".format(cash_out_df.Taxes.sum()))
     print("------------------------------------------------------------------")
+
+    plot_return(cash_in_df)
 
 main()
